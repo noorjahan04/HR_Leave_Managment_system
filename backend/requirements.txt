@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+sqlalchemy>=2.0.44,<2.1
+psycopg2-binary
+pydantic[email]
+python-dotenv
+PyJWT
+bcrypt
