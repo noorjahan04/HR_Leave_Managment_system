@@ -1,7 +1,8 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .database import Base, SessionLocal, engine
+from sqlalchemy.exc import ProgrammingError
+from .database import SessionLocal
 from .models import LeaveType, User
 from .routes import admin, leaves, public
 from .security import hash_password
@@ -29,8 +30,11 @@ def seed():
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    Base.metadata.create_all(bind=engine)  # creates tables if they don't exist
-    seed()
+    # Tables are created by Alembic migrations, not here. Run once: alembic upgrade head
+    try:
+        seed()
+    except ProgrammingError as e:
+        raise RuntimeError("Database tables are missing. Run:  alembic upgrade head") from e
     yield
 
 

@@ -9,8 +9,9 @@ class User(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(100))
     email: Mapped[str] = mapped_column(String(150), unique=True, index=True)
+    phone: Mapped[str | None] = mapped_column(String(15),nullable=True)
     password_hash: Mapped[str] = mapped_column(String(255))
-    role: Mapped[str] = mapped_column(String(20), default="employee")  # employee | hr
+    role: Mapped[str] = mapped_column(String(20), default="employee")  
     department: Mapped[str | None] = mapped_column(String(100), nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
@@ -43,7 +44,7 @@ class LeaveRequest(Base):
     end_date: Mapped[date] = mapped_column(Date)
     days: Mapped[int] = mapped_column(Integer)
     reason: Mapped[str | None] = mapped_column(Text, nullable=True)
-    status: Mapped[str] = mapped_column(String(20), default="pending")  # pending|approved|rejected|cancelled
+    status: Mapped[str] = mapped_column(String(20), default="pending")  
     reviewed_by: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
     review_note: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())

@@ -47,14 +47,18 @@ Built with **FastAPI**, **PostgreSQL** and **React (Vite)**.
 hr-leave-system/
 ├── backend/
 │   ├── app/
-│   │   ├── main.py        # app setup, CORS, table creation, seed data
+│   │   ├── main.py        # app setup, CORS, seed data
 │   │   ├── database.py    # PostgreSQL connection
 │   │   ├── models.py      # database tables
 │   │   ├── schemas.py     # request/response validation
 │   │   ├── security.py    # password hashing, JWT
 │   │   ├── deps.py        # current user and HR-only checks
 │   │   └── routes.py      # all API endpoints
-│   ├── schema.sql         # optional manual SQL schema
+│   ├── alembic/           # database migrations
+│   │   ├── env.py
+│   │   └── versions/      # one file per schema change
+│   ├── alembic.ini
+│   ├── schema.sql         # optional manual SQL schema (Alembic is preferred)
 │   ├── requirements.txt
 │   └── .env.example
 └── frontend/
@@ -82,7 +86,7 @@ CREATE DATABASE hr_leave;
 \q
 ```
 
-Tables and demo data are created automatically the first time the backend starts.
+Tables are created by Alembic migrations (step 2). Demo data is added automatically the first time the backend starts.
 
 ### 2. Backend
 
@@ -104,6 +108,12 @@ Edit `backend/.env`:
 ```
 DATABASE_URL=postgresql+psycopg2://postgres:YOUR_PASSWORD@localhost:5432/hr_leave
 SECRET_KEY=change-this-to-a-long-random-string
+```
+
+Create the tables with Alembic (run once, and again after every new migration):
+
+```bash
+alembic upgrade head
 ```
 
 Start the server:
@@ -162,6 +172,27 @@ days_per_year + adjustments - approved days - pending days   (current year)
 ```
 
 A user is HR only because `users.role = 'hr'`. The email address does not matter.
+
+## Database migrations (Alembic)
+
+Table structure is versioned with [Alembic](https://alembic.sqlalchemy.org). Run all commands from the `backend` folder.
+
+| Task | Command |
+|---|---|
+| Create / update tables | `alembic upgrade head` |
+| Change a model, then generate a migration | `alembic revision --autogenerate -m "add phone to users"` |
+| Roll back the last migration | `alembic downgrade -1` |
+| See current version | `alembic current` |
+| See history | `alembic history` |
+| Preview SQL without running it | `alembic upgrade head --sql` |
+
+Workflow for a schema change:
+1. Edit `backend/app/models.py` (for example add a column).
+2. Run `alembic revision --autogenerate -m "describe the change"`.
+3. Open the new file in `backend/alembic/versions/` and check it.
+4. Run `alembic upgrade head`.
+
+If your database was created by an older version of this project (tables already exist), run `alembic stamp head` once instead of `upgrade head`. This marks the database as up to date without recreating tables.
 
 ## Working with the data in SQL
 

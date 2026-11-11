@@ -20,12 +20,14 @@ env/
 .pytest_cache/
 .mypy_cache/
 .coverage
+htmlcov/
 
 # Node modules
 node_modules/
 
 # Frontend build
 dist/
+build/
 
 # IDE
 .vscode/
@@ -34,3 +36,13 @@ dist/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.swp
+
+# Python package files
+*.egg-info/
