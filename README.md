@@ -273,3 +273,7 @@ Vite will pick the next free port (for example 5174). Use the URL it prints.
 - Add your frontend URL to the CORS settings in `backend/app/main.py`
 - Set `VITE_API_URL` in `frontend/.env`, then run `npm run build` and serve the `dist` folder
 - Run the backend with `uvicorn app.main:app --host 0.0.0.0 --port 8000` behind HTTPS
+
+## License
+
+Add your preferred license here (for example MIT).
